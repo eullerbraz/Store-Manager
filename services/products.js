@@ -26,7 +26,6 @@ const create = async (item) => {
 };
 
 const findById = async (id) => {
-  
   if (typeof id !== 'string' || id.length !== 24) {
     return { code: 'invalid_data', message: 'Wrong id format' };
   }
