@@ -25,4 +25,24 @@ const create = async (item) => {
   return product;
 };
 
-module.exports = { create };
+const findById = async (id) => {
+  
+  if (typeof id !== 'string' || id.length !== 24) {
+    return { code: 'invalid_data', message: 'Wrong id format' };
+  }
+  
+  const product = await productModel.findById(id);
+  
+  if (!product) {
+    return { code: 'invalid_data', message: 'Wrong id format' };
+  }
+
+  return product;
+};
+
+const getAll = async () => {
+  const products = await productModel.getAll();
+  return products;
+};
+
+module.exports = { create, findById, getAll };
