@@ -1,6 +1,6 @@
 const express = require('express');
 const { json } = require('body-parser');
-const { create, getAll, findById } = require('./controllers/products');
+const { create, getAll, findById, update } = require('./controllers/products');
 const error = require('./middlewares/error');
 
 const PORT = 3000;
@@ -19,6 +19,8 @@ app.post('/products', create);
 app.get('/products', getAll);
 
 app.get('/products/:id', findById);
+
+app.put('/products/:id', update);
 
 app.use(error);
 

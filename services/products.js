@@ -1,25 +1,17 @@
 const productModel = (require('../models'))('products');
+const { validate } = require('../schemas/products');
 
 const create = async (item) => {
   const { name, quantity } = item;
 
   const exists = await productModel.findByName(name);
+  const { message, code } = validate(name, quantity);
 
   if (exists) {
     return { code: 'invalid_data', message: 'Product already exists' };
   }
 
-  if (name.length < 5) {
-    return { code: 'invalid_data', message: '"name" length must be at least 5 characters long' };
-  }
-  
-  if (quantity <= 0) {
-    return { code: 'invalid_data', message: '"quantity" must be larger than or equal to 1' };
-  }
-  
-  if (!Number(quantity)) {
-    return { code: 'invalid_data', message: '"quantity" must be a number' };
-  }
+  if (message) return { message, code };
 
   const product = await productModel.create(item);
   return product;
@@ -44,4 +36,14 @@ const getAll = async () => {
   return products;
 };
 
-module.exports = { create, findById, getAll };
+const update = async (newProduct) => {
+  const { name, quantity } = newProduct;
+  const { message, code } = validate(name, quantity);
+  
+  if (message) return { message, code };
+  
+  const updated = await productModel.update({ name, quantity });
+  return updated;
+};
+
+module.exports = { create, findById, getAll, update };
