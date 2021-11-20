@@ -1,6 +1,6 @@
 const express = require('express');
 const { json } = require('body-parser');
-const { create, getAll, findById, update } = require('./controllers/products');
+const { create, getAll, findById, update, remove } = require('./controllers/products');
 const error = require('./middlewares/error');
 
 const PORT = 3000;
@@ -21,6 +21,8 @@ app.get('/products', getAll);
 app.get('/products/:id', findById);
 
 app.put('/products/:id', update);
+
+app.delete('/products/:id', remove);
 
 app.use(error);
 

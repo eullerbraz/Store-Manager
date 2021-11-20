@@ -23,9 +23,7 @@ const findById = async (req, res, next) => {
 
   const product = await productService.findById(id);
 
-  if (product.message) {
-    return next(product);
-  }
+  if (product.message) return next(product);
 
   return res.status(200).json(product);
 };
@@ -36,11 +34,19 @@ const update = async (req, res, next) => {
 
   const updated = await productService.update({ id, name, quantity });
 
-  if (updated.message) {
-    return next(updated);
-  }
+  if (updated.message) return next(updated);
 
   return res.status(200).json(updated);
 };
 
-module.exports = { create, getAll, findById, update };
+const remove = async (req, res, next) => {
+  const { id } = req.params;
+
+  const deleted = await productService.remove(id);
+
+  if (deleted.message) return next(deleted);
+
+  return res.status(200).json(deleted);
+};
+
+module.exports = { create, getAll, findById, update, remove };

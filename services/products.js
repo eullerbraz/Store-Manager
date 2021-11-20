@@ -1,11 +1,11 @@
 const productModel = (require('../models'))('products');
-const { validate } = require('../schemas/products');
+const { validateProduct, validateIdFormat } = require('../schemas/products');
 
 const create = async (item) => {
   const { name, quantity } = item;
 
   const exists = await productModel.findByName(name);
-  const { message, code } = validate(name, quantity);
+  const { message, code } = validateProduct(name, quantity);
 
   if (exists) {
     return { code: 'invalid_data', message: 'Product already exists' };
@@ -18,12 +18,12 @@ const create = async (item) => {
 };
 
 const findById = async (id) => {
-  if (typeof id !== 'string' || id.length !== 24) {
-    return { code: 'invalid_data', message: 'Wrong id format' };
-  }
+  const validationId = validateIdFormat(id);
+
+  if (validationId.message) return validationId;
   
   const product = await productModel.findById(id);
-  
+
   if (!product) {
     return { code: 'invalid_data', message: 'Wrong id format' };
   }
@@ -37,13 +37,32 @@ const getAll = async () => {
 };
 
 const update = async (newProduct) => {
-  const { name, quantity } = newProduct;
-  const { message, code } = validate(name, quantity);
+  const { id, name, quantity } = newProduct;
+  const validationId = validateIdFormat(id);
+  const validationProduct = validateProduct(name, quantity);
+
+  if (validationId.message) return validationId;
   
-  if (message) return { message, code };
+  if (validationProduct.message) return validationProduct;
   
   const updated = await productModel.update({ name, quantity });
   return updated;
 };
 
-module.exports = { create, findById, getAll, update };
+const remove = async (id) => {
+  const validationId = validateIdFormat(id);
+
+  if (validationId.message) return validationId;
+
+  const product = await productModel.findById(id);
+
+  if (!product) {
+    return { code: 'invalid_data', message: 'Wrong id format' };
+  }
+
+  await productModel.remove(id);
+
+  return product;
+};
+
+module.exports = { create, findById, getAll, update, remove };

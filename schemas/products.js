@@ -1,4 +1,4 @@
-const validate = (name, quantity) => {
+const validateProduct = (name, quantity) => {
   if (name.length < 5) {
     return { code: 'invalid_data', message: '"name" length must be at least 5 characters long' };
   }
@@ -14,4 +14,11 @@ const validate = (name, quantity) => {
   return {};
 };
 
-module.exports = { validate };
+const validateIdFormat = (id) => {
+  if (typeof id !== 'string' || id.length !== 24) {
+    return { code: 'invalid_data', message: 'Wrong id format' };
+  }
+  return {};
+};
+
+module.exports = { validateProduct, validateIdFormat };
