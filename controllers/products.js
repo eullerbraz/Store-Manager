@@ -12,7 +12,7 @@ const create = async (req, res, next) => {
   return res.status(201).json(product);
 };
 
-const getAll = async (req, res) => {
+const getAll = async (_req, res) => {
   const products = await productService.getAll();
 
   return res.status(200).json({ products });

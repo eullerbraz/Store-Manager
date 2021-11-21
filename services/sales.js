@@ -6,8 +6,8 @@ const create = async (products) => {
   const isValidSale = await products.map(async ({ productId, quantity }) => {
     const found = (await productModel.findById(productId));
 
-    return found
-    && validateIdFormat(productId)
+    return validateIdFormat(productId)
+    && found
     && validateQuantity(quantity);
   }).reduce(async (acc, isValidProduct) => (await acc === (await isValidProduct)), true);
 
@@ -20,4 +20,21 @@ const create = async (products) => {
   return sale;
 };
 
-module.exports = { create };
+const getAll = async () => {
+  const sales = await saleModel.getAll();
+  return sales;
+};
+
+const findById = async (id) => {
+  const isValidId = validateIdFormat(id);
+
+  if (!isValidId) return { code: 'not_found', message: 'Sale not found' };
+
+  const sale = await saleModel.findById(id);
+
+  if (!sale) return { code: 'not_found', message: 'Sale not found' };
+
+  return sale;
+};
+
+module.exports = { create, getAll, findById };

@@ -2,6 +2,8 @@ const dictionary = (code) => {
   switch (code) {
     case 'invalid_data':
       return 422;
+    case 'not_found':
+      return 404;
     case 'internal_error':
       return 500;
     default:
