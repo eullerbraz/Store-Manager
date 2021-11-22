@@ -10,34 +10,34 @@ const create = async (collection, item) => {
 
 const findByName = async (collection, name) => {
   const db = await connection();
-  const product = await db.collection(collection).findOne({ name });
+  const row = await db.collection(collection).findOne({ name });
 
-  return product;
+  return row;
 };
 
 const findById = async (collection, id) => {
   const db = await connection();
-  const product = await db.collection(collection).findOne({ _id: ObjectId(id) });
+  const row = await db.collection(collection).findOne({ _id: ObjectId(id) });
 
-  return product;
+  return row;
 };
 
 const getAll = async (collection) => {
   const db = await connection();
-  const products = await db.collection(collection).find().toArray();
+  const rows = await db.collection(collection).find().toArray();
 
-  return products;
+  return rows;
 };
 
-const update = async (collection, newProduct) => {
-  const { id, name, quantity } = newProduct;
+const update = async (collection, newItem) => {
+  const { id, ...data } = newItem;
   const db = await connection();
   await db.collection(collection).updateOne(
     { _id: ObjectId(id) },
-    { $set: { name, quantity } },
+    { $set: { ...data } },
   );
 
-  return { id, name, quantity };
+  return { _id: id, ...data };
 };
 
 const remove = async (collection, id) => {
