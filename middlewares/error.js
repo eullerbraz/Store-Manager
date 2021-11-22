@@ -4,6 +4,8 @@ const dictionary = (code) => {
       return 422;
     case 'not_found':
       return 404;
+    case 'stock_problem':
+      return 404;
     case 'internal_error':
       return 500;
     default:

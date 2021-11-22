@@ -30,4 +30,24 @@ const validateSale = async (products) => {
   return isValidSale;
 };
 
-module.exports = { validateIdFormat, validateSale };
+const updateProductsQuantity = async (products) => {
+  const isValidUpdate = await products.map(async (product) => {
+    const foundProduct = await productModel.findById(product.productId);
+    const quantity = foundProduct.quantity + product.quantity;
+
+    if (quantity <= 0) {
+      return false;
+    }
+
+    await productModel.update({ id: product.productId, quantity });
+    return true;
+  }).reduce(async (acc, isValid) => (await acc === (await isValid)), true);
+
+  if (!isValidUpdate) {
+    return { code: 'stock_problem', message: 'Such amount is not permitted to sell' };
+  }
+
+  return {};
+};
+
+module.exports = { validateIdFormat, validateSale, updateProductsQuantity };

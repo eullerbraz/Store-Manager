@@ -1,13 +1,5 @@
 const saleModel = (require('../models'))('sales');
-const productModel = (require('../models'))('products');
-const { validateIdFormat, validateSale } = require('../schemas/sales');
-
-const updateProductsQuantity = async (products) => {
-  products.forEach(async ({ productId, quantity }) => {
-    const foundProduct = await productModel.findById(productId);
-    await productModel.update({ id: productId, quantity: foundProduct.quantity + quantity });
-  });
-};
+const { validateIdFormat, validateSale, updateProductsQuantity } = require('../schemas/sales');
 
 const create = async (products) => {
   const isValidSale = await validateSale(products);
@@ -16,9 +8,11 @@ const create = async (products) => {
     return { code: 'invalid_data', message: 'Wrong product ID or invalid quantity' };
   }
 
-  await updateProductsQuantity(
+  const isInvalidUpdate = await updateProductsQuantity(
     products.map(({ quantity, ...data }) => ({ ...data, quantity: -quantity })),
     );
+
+    if (isInvalidUpdate.message) return isInvalidUpdate;
 
   const sale = await saleModel.create({ itensSold: products });
 
@@ -55,12 +49,14 @@ const update = async (newSale) => {
 
   const found = await saleModel.findById(id);
 
-  await updateProductsQuantity(
+  const isInvalidUpdate = await updateProductsQuantity(
     itensSold.map(({ quantity, ...data }, index) => {
       const quantityVariation = found.itensSold[index].quantity - quantity;
       return { ...data, quantity: quantityVariation };
     }),
   );
+
+  if (isInvalidUpdate.message) return isInvalidUpdate;
 
   const updated = await saleModel.update({ id, itensSold });
 
@@ -76,7 +72,9 @@ const remove = async (id) => {
 
   if (!found) return { code: 'not_found', message: 'Wrong sale ID format' };
 
-  await updateProductsQuantity(found.itensSold);
+  const isInvalidUpdate = await updateProductsQuantity(found.itensSold);
+
+  if (isInvalidUpdate.message) return isInvalidUpdate;
 
   await saleModel.remove(id);
 
