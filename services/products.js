@@ -45,7 +45,7 @@ const update = async (newProduct) => {
   
   if (validationProduct.message) return validationProduct;
   
-  const updated = await productModel.update({ name, quantity });
+  const updated = await productModel.update({ id, name, quantity });
   return updated;
 };
 

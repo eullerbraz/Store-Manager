@@ -1,15 +1,8 @@
 const saleModel = (require('../models'))('sales');
-const productModel = (require('../models'))('products');
-const { validateIdFormat, validateQuantity } = require('../schemas/sales');
+const { validateIdFormat, validateSale } = require('../schemas/sales');
 
 const create = async (products) => {
-  const isValidSale = await products.map(async ({ productId, quantity }) => {
-    const found = (await productModel.findById(productId));
-
-    return validateIdFormat(productId)
-    && found
-    && validateQuantity(quantity);
-  }).reduce(async (acc, isValidProduct) => (await acc === (await isValidProduct)), true);
+  const isValidSale = await validateSale(products);
 
   if (!isValidSale) {
     return { code: 'invalid_data', message: 'Wrong product ID or invalid quantity' };
@@ -37,4 +30,17 @@ const findById = async (id) => {
   return sale;
 };
 
-module.exports = { create, getAll, findById };
+const update = async (newSale) => {
+  const { id, itensSold } = newSale;
+  const isValidSale = await validateSale(itensSold);
+
+  if (!isValidSale) {
+    return { code: 'invalid_data', message: 'Wrong product ID or invalid quantity' };
+  }
+
+  const updated = await saleModel.update({ id, itensSold });
+
+  return updated;
+};
+
+module.exports = { create, getAll, findById, update };

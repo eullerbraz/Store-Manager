@@ -26,4 +26,15 @@ const findById = async (req, res, next) => {
   return res.status(200).json(sale);
 };
 
-module.exports = { create, getAll, findById };
+const update = async (req, res, next) => {
+  const { id } = req.params;
+  const itensSold = req.body;
+  
+  const updated = await saleService.update({ id, itensSold });
+
+  if (updated.message) return next(updated);
+
+  return res.status(200).json(updated);
+};
+
+module.exports = { create, getAll, findById, update };

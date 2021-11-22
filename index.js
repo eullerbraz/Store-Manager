@@ -31,6 +31,8 @@ app.get('/sales', sales.getAll);
 
 app.get('/sales/:id', sales.findById);
 
+app.put('/sales/:id', sales.update);
+
 app.use(error);
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
