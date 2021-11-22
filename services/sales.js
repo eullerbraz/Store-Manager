@@ -33,6 +33,9 @@ const findById = async (id) => {
 const update = async (newSale) => {
   const { id, itensSold } = newSale;
   const isValidSale = await validateSale(itensSold);
+  const isValidId = validateIdFormat(id);
+
+  if (!isValidId) return { code: 'not_found', message: 'Sale not found' };
 
   if (!isValidSale) {
     return { code: 'invalid_data', message: 'Wrong product ID or invalid quantity' };
@@ -43,4 +46,18 @@ const update = async (newSale) => {
   return updated;
 };
 
-module.exports = { create, getAll, findById, update };
+const remove = async (id) => {
+  const isValidId = validateIdFormat(id);
+
+  if (!isValidId) return { code: 'invalid_data', message: 'Wrong sale ID format' };
+
+  const found = await saleModel.findById(id);
+
+  if (!found) return { code: 'not_found', message: 'Wrong sale ID format' };
+
+  await saleModel.remove(id);
+
+  return found;
+};
+
+module.exports = { create, getAll, findById, update, remove };
