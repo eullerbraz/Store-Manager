@@ -2,10 +2,10 @@ const { ObjectId } = require('mongodb');
 const connection = require('./connection');
 
 const create = async (collection, item) => {
+  const { _id, ...newItem } = item;
   const db = await connection();
-  await db.collection(collection).insertOne(item);
-
-  return { ...item };
+  const { insertedId } = await db.collection(collection).insertOne(newItem);
+  return { ...newItem, _id: insertedId };
 };
 
 const findByName = async (collection, name) => {
