@@ -1,4 +1,4 @@
-const saleModel = (require('../models'))('sales');
+const saleModel = require('../models/saleModel');
 const { validateIdFormat, validateSale, updateProductsQuantity } = require('../schemas/sales');
 
 const create = async (products) => {
@@ -72,9 +72,7 @@ const remove = async (id) => {
 
   if (!found) return { code: 'not_found', message: 'Wrong sale ID format' };
 
-  const isInvalidUpdate = await updateProductsQuantity(found.itensSold);
-
-  if (isInvalidUpdate.message) return isInvalidUpdate;
+  await updateProductsQuantity(found.itensSold);
 
   await saleModel.remove(id);
 

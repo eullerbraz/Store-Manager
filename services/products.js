@@ -1,4 +1,4 @@
-const productModel = (require('../models'))('products');
+const productModel = require('../models/productModel');
 const { validateProduct, validateIdFormat } = require('../schemas/products');
 
 const create = async (item) => {
