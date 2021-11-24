@@ -1,4 +1,4 @@
-const productModel = (require('../models'))('products');
+const productModel = require('../models/productModel');
 
 const validateQuantity = (quantity) => {
     if (quantity <= 0) return false;
